@@ -12,17 +12,26 @@ package simplephysicssim;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class engine implements Runnable, MouseListener
+public class engine implements Runnable, MouseListener//, KeyListener
 {
+    private Particle temp = new Particle();
     ArrayList<Particle> pList = new ArrayList();
+    ArrayList<Particle> tempList = new ArrayList();
     private window win = new window();
     int width = win.getWidth();
     int height = win.getHeight();
+ 
+    engine(){
+	    win.addController(this);      
+	    randInit(10,win.getWidth(),win.getHeight());
+	    }
 
     public void randInit(int count, int width, int height)
     {
@@ -34,7 +43,7 @@ public class engine implements Runnable, MouseListener
             Particle P = new Particle();
             P.setCoord(rand.nextInt(width),rand.nextInt(height));
             P.setVelocity(rand.nextInt(1),rand.nextInt(1));
-            P.setMass(rand.nextInt(10));//set mass value
+            P.setMass(5);//rand.nextInt(10));//set mass value
             pList.add(P);
             System.out.println("particle " + i + " is " + P.getMass() + " kg.");
         }
@@ -53,67 +62,68 @@ public class engine implements Runnable, MouseListener
     {
 	    pList.add(p);
     }	
-    private Particle temp;
 //    private int pointCount = 50;
 
 //    ArrayList<Particle> pList = new ArrayList();
 
-    engine()
-    {
-    }
+//    engine()
+//    {
+//    }
+//
+//    public void run()
+//    {
+//        win.draw(pList); //draw initial scene
+//        pause(2000); //let gui come up
+//
+//        //particle motion calculation loop
+	public void run()
+	{
 
-    public void run()
-    {
-        win.draw(pList); //draw initial scene
-        pause(2000); //let gui come up
-
-        //particle motion calculation loop
-        while(true)
-        {
-            //check for new particles
-//            if(win.v.x2!=-1)
-//            {
-////                System.out.println("get");
-//                Particle p = new Particle(win.v.x1,win.v.y1,win.v.vx,win.v.vy);
-//                p.setMass(5);//win.v.getMass();
-//                pList.add(p);
-////                System.out.println("plist size:"+pList.size());
-//                win.v.x2=-1;
-//            }
-
-            for(int i = 0; i<pList.size(); i++)
+	    while(true)
+	    {
+		    tempList = pList;
+             for(int i = 0; i< tempList.size(); i++)
             {
                 //particle to analyze gravitational forces on
-                Particle A = pList.get(i);
-
-                //law of conservation of motion
-                if(A.getMass()>0)
+                Particle A = tempList.get(i);
+		
+                //wall collision detection
+                if(A.getXCoord() + A.getXVelocity() < 0 ||
+		   A.getXCoord() + A.getXVelocity() > width)
 		{
-                    A.setCoord( A.getCoord().first+A.getVelocity().first*0.1, 
-			    	A.getCoord().second+A.getVelocity().second*0.1);
+                    A.setXVelocity(-A.getXVelocity());
+		}
+                if(A.getYCoord() + A.getYVelocity() < 0 ||
+		   A.getYCoord() + A.getYVelocity() > height)
+		{
+                    A.setYVelocity(-A.getYVelocity());
 		}
 
+                A.setCoord( A.getXCoord() + A.getXVelocity(), 
+			    A.getYCoord() + A.getYVelocity());
+
                 //friction
-                if(A.getMass()>10)
+                //if(A.getMass()>1)
                 {
                     int dirX = 1;
                     int dirY = 1;
-                    double friction = 0.00001;
-                    if(A.getVelocity().first>0)
+                    double friction = 0.01;
+                    if(A.getXVelocity()>0)
                         dirX = -1;
-                    else if(A.getVelocity().first==0)
+                    else if(A.getXVelocity()==0)
                         dirX = 0;
-                    if(A.getVelocity().second>0)
+                    if(A.getYVelocity()>0)
                         dirY = -1;
-                    else if(A.getVelocity().second==0)
+                    else if(A.getYVelocity()==0)
                         dirY = 0;
-                    A.setVelocity(A.getVelocity().first+dirX*friction*Math.pow(A.getMass(),2), A.getVelocity().second+dirY*friction*Math.pow(A.getMass(),2));
+                    A.setVelocity(A.getXVelocity() + dirX*friction*Math.pow(A.getXVelocity(),2), 
+				  A.getYVelocity() + dirY*friction*Math.pow(A.getYVelocity(),2));
                 }
 
                 //check other particles for gravity calculations
-		if(A.getVelocity().first+A.getVelocity().second<1)
+		if(true)//A.getVelocity().first+A.getVelocity().second<1)
 		{
-			for(int j = 0; j<pList.size(); j++)
+			for(int j = 0; j<tempList.size(); j++)
 			{
 			//particle to compare A with
 				Particle B = pList.get(j);
@@ -151,7 +161,7 @@ public class engine implements Runnable, MouseListener
 						//inelastic collision
 						A.setMass(A.getMass() + B.getMass());
 						//delete the other
-						pList.remove(j);
+						tempList.remove(j);
 
 							//elastic collision
 					}
@@ -169,15 +179,6 @@ public class engine implements Runnable, MouseListener
  //                   A.getVelocity().second = A.getVelocity().second + 0.05;
 //		}
                 
-                //wall collision detection
-                if(A.getCoord().first > width-5 && A.getVelocity().first > 0 || A.getCoord().first < 5 && A.getVelocity().first < 0)
-		{
-                    A.setXVelocity(A.getVelocity().first);
-		}
-                if(A.getCoord().second > height - 5 && A.getVelocity().second > 0 || A.getCoord().second < 5 && A.getVelocity().second < 0)
-		{
-                    A.setYVelocity(-(A.getVelocity().second));///1.1);
-		}
 
                 //looping edges
 //                if(A.getCoord().first<5)
@@ -189,9 +190,10 @@ public class engine implements Runnable, MouseListener
 //                if(A.getCoord().second>height-5)
 //                    A.getCoord().second = 5;
             }
+	     pList = tempList;
             //pause(10);
             win.draw(pList);
-        }
+	    }
     }
     
     public void pause(int time)
@@ -215,6 +217,11 @@ public class engine implements Runnable, MouseListener
             win.clear();
             win.updatePicture();
         }
+	else
+	{
+		temp.setCoord(me.getX(), me.getY());
+		temp.setVelocity(0, 0);
+	}
     }
 
 
@@ -232,7 +239,8 @@ public class engine implements Runnable, MouseListener
     {
         if(me.getButton() == 1)
         {
-		temp.setVelocity(me.getX(), me.getY());
+		temp.setVelocity(temp.getXCoord() - me.getX(), 
+				 temp.getYCoord() - me.getY());
 		temp.setMass(5);
         }
         //ask the user for particle mass
@@ -264,4 +272,7 @@ public class engine implements Runnable, MouseListener
     public void mouseMoved(MouseEvent me){}
     public void mouseEntered(MouseEvent mouseevent){}
     public void mouseExited(MouseEvent mouseevent){}
+    
+    public void keyReleased(KeyEvent k){}
+    public void keyTyped(KeyEvent k){}
 }
