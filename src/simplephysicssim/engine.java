@@ -30,7 +30,7 @@ public class engine implements Runnable, MouseListener//, KeyListener
  
     engine(){
 	    win.addController(this);      
-	    randInit(10,win.getWidth(),win.getHeight());
+	    randInit(100,win.getWidth(),win.getHeight());
 	    }
 
     public void randInit(int count, int width, int height)
@@ -107,15 +107,16 @@ public class engine implements Runnable, MouseListener//, KeyListener
                 {
                     int dirX = 1;
                     int dirY = 1;
-                    double friction = 0.01;
-                    if(A.getXVelocity()>0)
+                    double friction = 0.001;
+                    if(A.getXVelocity()>0){
                         dirX = -1;
-                    else if(A.getXVelocity()==0)
+		    }else if(A.getXVelocity()==0){
                         dirX = 0;
-                    if(A.getYVelocity()>0)
+		    }if(A.getYVelocity()>0){
                         dirY = -1;
-                    else if(A.getYVelocity()==0)
+		    }else if(A.getYVelocity()==0){
                         dirY = 0;
+		    }
                     A.setVelocity(A.getXVelocity() + dirX*friction*Math.pow(A.getXVelocity(),2), 
 				  A.getYVelocity() + dirY*friction*Math.pow(A.getYVelocity(),2));
                 }
@@ -136,23 +137,21 @@ public class engine implements Runnable, MouseListener//, KeyListener
 					double ratioY = Math.abs((A.getCoord().second-B.getCoord().second)/d);
 
 					//apply gravity rules
-					double newX;
-					double newY;
 					if(A.getCoord().first-B.getCoord().first>0)
 					{
-						A.setXVelocity(A.getVelocity().first - ratioX*F);
+						A.setXVelocity(A.getXVelocity() - ratioX*F);
 					}
 					else if(A.getCoord().first-B.getCoord().first<0)
 					{
-						A.setXVelocity(A.getVelocity().first + ratioX*F);
+						A.setXVelocity(A.getXVelocity() + ratioX*F);
 					}
 					if(A.getCoord().second-B.getCoord().second>0)
 					{
-						A.setYVelocity(A.getVelocity().second - ratioY*F);
+						A.setYVelocity(A.getYVelocity() - ratioY*F);
 					}
 					else if(A.getCoord().second-B.getCoord().second<0)
 					{
-						A.setYVelocity(A.getVelocity().second + ratioY*F);
+						A.setYVelocity(A.getYVelocity() + ratioY*F);
 					}
 
 					//collision detection
@@ -165,30 +164,9 @@ public class engine implements Runnable, MouseListener//, KeyListener
 
 							//elastic collision
 					}
-//                            double[] temp = new double[2];
-//                            temp = A.v;
-//                            A.v = B.v;
-//                            B.v = temp;
 				}
 			}
 		}
-
-                //gravity
-//                if( A.getCoord().second < 495)
-//		{
- //                   A.getVelocity().second = A.getVelocity().second + 0.05;
-//		}
-                
-
-                //looping edges
-//                if(A.getCoord().first<5)
-//                    A.getCoord().first = width-5;
-//                if(A.getCoord().second>width-5)
-//                    A.getCoord().second = 5;
-//                if(A.getCoord().first<5)
-//                    A.getCoord().first = height-5;
-//                if(A.getCoord().second>height-5)
-//                    A.getCoord().second = 5;
             }
 	     pList = tempList;
             //pause(10);
@@ -254,25 +232,8 @@ public class engine implements Runnable, MouseListener//, KeyListener
         //eng.newParticle(v.x1,v.y1,v.x2,v.y2);
     }
 
-//    public void mouseWheelMoved(MouseWheelEvent me)
-//    {
-//		MPxy = new Point(me.getX(),me.getY());
-//		double clickRe = (MinRe + Re_factor*MPxy.getX());
-//		double clickIm = (MinIm + Im_factor*MPxy.getY());
-//		MinRe = clickRe - Re_factor*10;
-//		MaxRe = clickRe + Re_factor*10;
-//		MinIm = clickIm - Im_factor*1;
-//		MaxIm = MinIm+(MaxRe-MinRe)*ImageHeight/ImageWidth;
-//		Re_factor = (MaxRe-MinRe)/(ImageWidth-1);
-//		Im_factor = (MaxIm-MinIm)/(ImageHeight-1);
-//		makeMandlebrot();
-//		updatePicture(gImage);
-//    }
 
     public void mouseMoved(MouseEvent me){}
     public void mouseEntered(MouseEvent mouseevent){}
     public void mouseExited(MouseEvent mouseevent){}
-    
-    public void keyReleased(KeyEvent k){}
-    public void keyTyped(KeyEvent k){}
 }

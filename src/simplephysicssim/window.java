@@ -59,7 +59,7 @@ public class window extends JPanel implements java.util.Observer
         try
         {
             File file = new File("blank.jpg");
-            displayImage = ImageIO.read(file); //passes this variable up a scope level
+            displayImage = ImageIO.read(file);
         }
         catch (IOException e)
         {
@@ -137,13 +137,36 @@ public class window extends JPanel implements java.util.Observer
 		//}
                 //else if(A.getMass() > 0)
 		//{
-                    displayImage.setRGB((int)A.getCoord().first,(int)A.getCoord().second,0x000000);
+                    displayImage.setRGB((int)A.getXCoord(),(int)A.getYCoord(),0x000000);
+		    for(int j = 0; j < 16; j++){
+			    displayImage.setRGB((int)A.getTail(j).first,(int)A.getTail(j).second,i*0x111111);
+		    }
 		//}
             }
 //            else
 //                System.out.println("("+A.getCoord().first+","+A.getCoord().second+")");
         }
+//	for(int i = 0; i < width; i++){
+//		for(int j = 0; j < height; j++){
+//			if(displayImage.getRGB(i, j)!=-1){
+//				displayImage.setRGB(i, j, displayImage.getRGB(i, j)+0x111111);
+//			}
+//		}
+//	}
         updatePicture();
+    }
+    
+    public int incrementColor( int color, int step )
+    {
+	if(color<0x000100){
+		return color + 0x000001*step;
+	}else if(color<0x010000){
+		return color + 0x000100*step - 0x000001*step;
+	}else if(color<0xFFFFFF){
+		return color + 0x010000*step - 0x000100*step;
+	}else{
+		return 0x000000;
+	}
     }
 
     public void addController(engine controller)
