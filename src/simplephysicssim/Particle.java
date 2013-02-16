@@ -55,6 +55,26 @@ public class Particle implements IParticle
     	m_velocity[1] = y;
     }
     
+    public double getXVelocity()
+    {
+	    return m_velocity[0];
+    }
+    
+    public double getYVelocity()
+    {
+	    return m_velocity[1];
+    }
+    
+    public double getXCoord()
+    {
+	    return m_coordinates[0];
+    }
+    
+    public double getYCoord()
+    {
+	    return m_coordinates[1];
+    }
+    
     public void setMass(double mass)
     {
     	m_mass = mass;
