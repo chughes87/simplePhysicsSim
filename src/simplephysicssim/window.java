@@ -17,7 +17,6 @@ package simplephysicssim;
  * @version 0.1.0
  */
 
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.imageio.*;
@@ -27,8 +26,7 @@ import java.util.Observable;
 
 public class window extends JPanel implements java.util.Observer
 {
-    private BufferedImage displayImage; //global image variable
-    private BufferedImage orig;
+    private BufferedImage displayImage;
     private JLabel image;
     private JFrame frame;
     private int width;
@@ -52,22 +50,9 @@ public class window extends JPanel implements java.util.Observer
 //    
 //    }
 	// Called from the Model
-    	public void update(Observable obs, Object obj) {}
-
-		//who called us and what did they send?
-		//System.out.println ("View      : Observable is " + obs.getClass() + ", object passed is " + obj.getClass());
-
-		//model Pull 
-		//ignore obj and ask model for value, 
-		//to do this, the view has to know about the model (which I decided I didn't want to do)
-		//uncomment next line to do Model Pull
-    		//myTextField.setText("" + model.getValue());
-
-		//model Push 
-		//parse obj
-//		myTextField.setText("" + ((Integer)obj).intValue());	//obj is an Object, need to cast to an Integer
-
-//    	} //update()
+    public void update(Observable obs, Object obj) 
+    {
+    }
 
     public void clear()
     {
@@ -143,16 +128,17 @@ public class window extends JPanel implements java.util.Observer
         for(int i = 0; i<pList.size(); i++)
         {
             Particle A = pList.get(i);
-            if(A.getCoord().first < width-5 && A.getCoord().first > 5 && A.getCoord().second < height-5 && A.getCoord().second > 5)
+            if(A.getXCoord() < width && A.getXCoord() > 0 && 
+		    A.getYCoord() < height && A.getYCoord() > 0)
             {
-                if(A.getMass() > 10)
-		{
-                    circle((int)A.getCoord().first,(int)A.getCoord().second);
-		}
-                else if(A.getMass() > 0)
-		{
+                //if(A.getMass() > 10)
+		//{
+                //    circle((int)A.getCoord().first,(int)A.getCoord().second);
+		//}
+                //else if(A.getMass() > 0)
+		//{
                     displayImage.setRGB((int)A.getCoord().first,(int)A.getCoord().second,0x000000);
-		}
+		//}
             }
 //            else
 //                System.out.println("("+A.getCoord().first+","+A.getCoord().second+")");
@@ -160,9 +146,10 @@ public class window extends JPanel implements java.util.Observer
         updatePicture();
     }
 
-    public void addController(MouseListener controller)
+    public void addController(engine controller)
     {
 	    frame.addMouseListener(controller);
+	    //frame.addKeyListener(controller);
     }
 }
 
